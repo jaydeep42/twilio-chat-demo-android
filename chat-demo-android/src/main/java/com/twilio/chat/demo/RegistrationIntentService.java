@@ -35,6 +35,7 @@ public class RegistrationIntentService extends IntentService
             String token = FirebaseInstanceId.getInstance().getToken();
             logger.i("FCM Registration Token: " + token);
 
+
             /**
              * Persist registration to Twilio servers.
              */

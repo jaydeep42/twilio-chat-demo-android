@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lay_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="2dip"
+        >
+
+        <com.twilio.chat.demo.MessageTextView
+            android:id="@+id/body2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dip"
+            android:paddingRight="2dip"
+            android:text="Hello bubbles!"
+            android:textSize="22sp"
+
+            android:textColor="@android:color/black" />
+
+        <com.twilio.chat.demo.MessageTextView
+            android:id="@+id/dateee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10:00 PM"
+            android:gravity="bottom"
+            android:textSize="12sp"
+            android:layout_gravity="bottom"
+            android:visibility="gone"
+            android:layout_marginLeft="2dip"
+            android:layout_marginRight="5dip"
+            />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

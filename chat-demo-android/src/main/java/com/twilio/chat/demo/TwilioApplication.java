@@ -8,6 +8,8 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import com.twilio.chat.ErrorInfo;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 public class TwilioApplication extends Application
 {
@@ -18,6 +20,7 @@ public class TwilioApplication extends Application
     public void onCreate()
     {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         TwilioApplication.instance = this;
         basicClient = new BasicChatClient(getApplicationContext());
     }

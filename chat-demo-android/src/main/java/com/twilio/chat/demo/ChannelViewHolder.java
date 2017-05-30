@@ -19,21 +19,21 @@ public class ChannelViewHolder extends ItemViewHolder<ChannelModel>
 {
     @ViewId(R.id.channel_friendly_name)
     TextView friendlyName;
-
-    @ViewId(R.id.channel_sid)
-    TextView channelSid;
-
-    @ViewId(R.id.channel_updated_date)
-    TextView updatedDate;
-
-    @ViewId(R.id.channel_created_date)
-    TextView createdDate;
-
-    @ViewId(R.id.channel_users_count)
-    TextView usersCount;
-
-    @ViewId(R.id.channel_total_messages_count)
-    TextView totalMessagesCount;
+//
+//    @ViewId(R.id.channel_sid)
+//    TextView channelSid;
+//
+//    @ViewId(R.id.channel_updated_date)
+//    TextView updatedDate;
+//
+//    @ViewId(R.id.channel_created_date)
+//    TextView createdDate;
+//
+//    @ViewId(R.id.channel_users_count)
+//    TextView usersCount;
+//
+//    @ViewId(R.id.channel_total_messages_count)
+//    TextView totalMessagesCount;
 
     @ViewId(R.id.channel_unconsumed_messages_count)
     TextView unconsumedMessagesCount;
@@ -65,17 +65,17 @@ public class ChannelViewHolder extends ItemViewHolder<ChannelModel>
     public void onSetValues(ChannelModel channel, PositionInfo arg1)
     {
         friendlyName.setText(channel.getFriendlyName());
-        channelSid.setText(channel.getSid());
+//        channelSid.setText(channel.getSid());
 
         String updated = channel.getDateUpdatedAsDate() != null ?
                              channel.getDateUpdatedAsDate().toString() :
                              "<no updated date>";
-        updatedDate.setText(updated);
+//        updatedDate.setText(updated);
 
         String created = channel.getDateCreatedAsDate() != null ?
                              channel.getDateCreatedAsDate().toString() :
                              "<no created date>";
-        createdDate.setText(created);
+//        createdDate.setText(created);
 
         channel.getUnconsumedMessagesCount(new CallbackListener<Long>() {
             @Override
@@ -89,7 +89,7 @@ public class ChannelViewHolder extends ItemViewHolder<ChannelModel>
             @Override
             public void onSuccess(Long value) {
                 Log.d("ChannelViewHolder", "getMessagesCount callback");
-                totalMessagesCount.setText("Messages "+value.toString());
+//                totalMessagesCount.setText("Messages "+value.toString());
             }
         });
 
@@ -97,16 +97,18 @@ public class ChannelViewHolder extends ItemViewHolder<ChannelModel>
             @Override
             public void onSuccess(Long value) {
                 Log.d("ChannelViewHolder", "getMembersCount callback");
-                usersCount.setText("Members "+value.toString());
+//                usersCount.setText("Members "+value.toString());
             }
         });
 
         if (channel.getStatus() == ChannelStatus.JOINED) {
             view.setBackgroundColor(channel.getType() == ChannelType.PRIVATE ?
-                Color.BLUE : Color.WHITE);    
+                Color.BLUE : Color.WHITE);
+
         } else {
             view.setBackgroundColor(channel.getStatus() == ChannelStatus.INVITED ?
                 Color.YELLOW : Color.GRAY);
+
         }
     }
 

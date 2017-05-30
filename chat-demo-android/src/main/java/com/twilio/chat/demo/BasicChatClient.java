@@ -1,31 +1,17 @@
 package com.twilio.chat.demo;
 
-import java.util.Arrays;
-import java.util.List;
-
-import com.twilio.accessmanager.AccessManager;
-
-import com.twilio.chat.Channel;
-import com.twilio.chat.StatusListener;
-import com.twilio.chat.CallbackListener;
-import com.twilio.chat.ChatClientListener;
-import com.twilio.chat.ChatClient;
-import com.twilio.chat.ErrorInfo;
-import com.twilio.chat.User;
-import com.twilio.chat.internal.HandlerUtil;
-
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-import android.widget.Toast;
+
+import com.twilio.accessmanager.AccessManager;
+import com.twilio.chat.CallbackListener;
+import com.twilio.chat.ChatClient;
+import com.twilio.chat.ErrorInfo;
+import com.twilio.chat.internal.HandlerUtil;
 
 public class BasicChatClient extends CallbackListener<ChatClient>
-    implements AccessManager.Listener, AccessManager.TokenUpdateListener
-{
+        implements AccessManager.Listener, AccessManager.TokenUpdateListener {
     private static final Logger logger = Logger.getLogger(BasicChatClient.class);
 
     private String accessToken;
@@ -33,17 +19,16 @@ public class BasicChatClient extends CallbackListener<ChatClient>
 
     private ChatClient chatClient;
 
-    private Context       context;
+    private Context context;
     private AccessManager accessManager;
 
     private LoginListener loginListener;
-    private Handler       loginListenerHandler;
+    private Handler loginListenerHandler;
 
-    private String        urlString;
-    private String        username;
+    private String urlString;
+    private String username;
 
-    public BasicChatClient(Context context)
-    {
+    public BasicChatClient(Context context) {
         super();
         this.context = context;
 
@@ -53,19 +38,8 @@ public class BasicChatClient extends CallbackListener<ChatClient>
         }
     }
 
-    public interface LoginListener {
-        public void onLoginStarted();
-
-        public void onLoginFinished();
-
-        public void onLoginError(String errorMessage);
-
-        public void onLogoutFinished();
-    }
-
-    public void setFCMToken(String fcmToken)
-    {
-        logger.e("setFCMToken "+fcmToken);
+    public void setFCMToken(String fcmToken) {
+        logger.e("setFCMToken " + fcmToken);
         this.fcmToken = fcmToken;
         if (chatClient != null) {
             setupFcmToken();
@@ -74,12 +48,11 @@ public class BasicChatClient extends CallbackListener<ChatClient>
 
     public void login(final String username, final String url, final LoginListener listener) {
         if (username == this.username
-            && urlString == url
-            && loginListener == listener
-            && chatClient != null
-            && accessManager != null
-            && !accessManager.isTokenExpired())
-        {
+                && urlString == url
+                && loginListener == listener
+                && chatClient != null
+                && accessManager != null
+                && !accessManager.isTokenExpired()) {
             onSuccess(chatClient);
             return;
         }
@@ -93,60 +66,53 @@ public class BasicChatClient extends CallbackListener<ChatClient>
         new GetAccessTokenAsyncTask().execute(username, urlString);
     }
 
-    public ChatClient getChatClient()
-    {
+    public ChatClient getChatClient() {
         return chatClient;
     }
 
-    private void setupFcmToken()
-    {
+    private void setupFcmToken() {
         chatClient.registerFCMToken(fcmToken,
-            new ToastStatusListener(
-                "Firebase Messaging registration successful",
-                "Firebase Messaging registration not successful"));
+                new ToastStatusListener(
+                        "Firebase Messaging registration successful",
+                        "Firebase Messaging registration not successful"));
     }
 
-    public void unregisterFcmToken()
-    {
+    public void unregisterFcmToken() {
         chatClient.unregisterFCMToken(fcmToken,
-            new ToastStatusListener(
-                "Firebase Messaging unregistration successful",
-                "Firebase Messaging unregistration not successful"));
+                new ToastStatusListener(
+                        "Firebase Messaging unregistration successful",
+                        "Firebase Messaging unregistration not successful"));
     }
 
-    private void createAccessManager()
-    {
+    private void createAccessManager() {
         if (accessManager != null) return;
 
         accessManager = new AccessManager(accessToken, this);
         accessManager.addTokenUpdateListener(this);
     }
 
-    private void createClient()
-    {
+    private void createClient() {
         if (chatClient != null) return;
 
         ChatClient.Properties props =
-            new ChatClient.Properties.Builder()
-                .setRegion("us1")
-                .createProperties();
+                new ChatClient.Properties.Builder()
+                        .setRegion("us1")
+                        .createProperties();
 
         ChatClient.create(context.getApplicationContext(),
-                                 accessToken,
-                                 props,
-                                 this);
+                accessToken,
+                props,
+                this);
     }
 
-    public void shutdown()
-    {
+    public void shutdown() {
         chatClient.shutdown();
         chatClient = null; // Client no longer usable after shutdown()
     }
 
     // Client created, remember the reference and set up UI
     @Override
-    public void onSuccess(ChatClient client)
-    {
+    public void onSuccess(ChatClient client) {
         logger.d("Received completely initialized ChatClient");
         chatClient = client;
 
@@ -156,8 +122,7 @@ public class BasicChatClient extends CallbackListener<ChatClient>
 
         loginListenerHandler.post(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 if (loginListener != null) {
                     loginListener.onLoginFinished();
                 }
@@ -167,14 +132,12 @@ public class BasicChatClient extends CallbackListener<ChatClient>
 
     // Client not created, fail
     @Override
-    public void onError(final ErrorInfo errorInfo)
-    {
+    public void onError(final ErrorInfo errorInfo) {
         TwilioApplication.get().logErrorInfo("Login error", errorInfo);
 
         loginListenerHandler.post(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 if (loginListener != null) {
                     loginListener.onLoginError(errorInfo.toString());
                 }
@@ -182,53 +145,56 @@ public class BasicChatClient extends CallbackListener<ChatClient>
         });
     }
 
-    // AccessManager.Listener
-
     @Override
-    public void onTokenWillExpire(AccessManager accessManager)
-    {
+    public void onTokenWillExpire(AccessManager accessManager) {
         TwilioApplication.get().showToast("Token will expire in 3 minutes. Getting new token.");
         new GetAccessTokenAsyncTask().execute(username, urlString);
     }
 
+    // AccessManager.Listener
+
     @Override
-    public void onTokenExpired(AccessManager accessManager)
-    {
+    public void onTokenExpired(AccessManager accessManager) {
         TwilioApplication.get().showToast("Token expired. Getting new token.");
         new GetAccessTokenAsyncTask().execute(username, urlString);
     }
 
     @Override
-    public void onError(AccessManager accessManager, String err)
-    {
+    public void onError(AccessManager accessManager, String err) {
         TwilioApplication.get().showToast("AccessManager error: " + err);
+    }
+
+    @Override
+    public void onTokenUpdated(String token) {
+        if (chatClient == null) return;
+
+        chatClient.updateToken(token, new ToastStatusListener(
+                "Client Update Token was successfull",
+                "Client Update Token failed"));
     }
 
     // AccessManager.TokenUpdateListener
 
-    @Override
-    public void onTokenUpdated(String token)
-    {
-        if (chatClient == null) return;
+    public interface LoginListener {
+        public void onLoginStarted();
 
-        chatClient.updateToken(token, new ToastStatusListener(
-            "Client Update Token was successfull",
-            "Client Update Token failed"));
+        public void onLoginFinished();
+
+        public void onLoginError(String errorMessage);
+
+        public void onLogoutFinished();
     }
 
     /**
      * Modify this method if you need to provide more information to your Access Token Service.
      */
-    private class GetAccessTokenAsyncTask extends AsyncTask<String, Void, String>
-    {
+    private class GetAccessTokenAsyncTask extends AsyncTask<String, Void, String> {
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
             super.onPreExecute();
             loginListenerHandler.post(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     if (loginListener != null) {
                         loginListener.onLoginStarted();
                     }
@@ -237,8 +203,7 @@ public class BasicChatClient extends CallbackListener<ChatClient>
         }
 
         @Override
-        protected String doInBackground(String... params)
-        {
+        protected String doInBackground(String... params) {
             try {
                 accessToken = HttpHelper.httpGet(params[0], params[1]);
             } catch (Exception e) {
@@ -248,8 +213,7 @@ public class BasicChatClient extends CallbackListener<ChatClient>
         }
 
         @Override
-        protected void onPostExecute(String result)
-        {
+        protected void onPostExecute(String result) {
             super.onPostExecute(result);
             createAccessManager();
             createClient();

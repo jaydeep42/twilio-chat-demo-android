@@ -19,7 +19,7 @@ class ToastStatusListener extends StatusListener
     @Override
     public void onSuccess()
     {
-        TwilioApplication.get().showToast(okText);
+//        TwilioApplication.get().showToast(okText);
     }
 
     @Override
